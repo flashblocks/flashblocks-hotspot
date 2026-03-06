@@ -24,9 +24,13 @@
 			"type": "string",
 			"default": ""
 		},
-		"tooltipTrigger": {
-			"type": "string",
-			"default": "click"
+		"openOnClick": {
+			"type": "boolean",
+			"default": true
+		},
+		"openOnHover": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"supports": {

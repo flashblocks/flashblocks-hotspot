@@ -16,7 +16,7 @@ import './editor.scss';
 const ALLOWED_BLOCKS = [ 'flashblocks/hotspot-spot' ];
 
 export default function Edit( { attributes, setAttributes, clientId } ) {
-	const { mediaId, mediaUrl, mediaAlt, tooltipLocation, tooltipTrigger } = attributes;
+	const { mediaId, mediaUrl, mediaAlt, tooltipLocation, openOnClick, openOnHover } = attributes;
 
 	const { insertBlock } = useDispatch( blockEditorStore );
 	const innerBlockCount = useSelect(
@@ -74,13 +74,14 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 			<InspectorControls>
 				<PanelBody title={ __( 'Tooltip Settings', 'flashblocks-hotspot' ) }>
 					<ToggleControl
-						label={ __( 'Show on hover', 'flashblocks-hotspot' ) }
-						help={ tooltipTrigger === 'hover'
-							? __( 'Tooltips appear on mouse over.', 'flashblocks-hotspot' )
-							: __( 'Tooltips appear on click.', 'flashblocks-hotspot' )
-						}
-						checked={ tooltipTrigger === 'hover' }
-						onChange={ ( val ) => setAttributes( { tooltipTrigger: val ? 'hover' : 'click' } ) }
+						label={ __( 'Open on click', 'flashblocks-hotspot' ) }
+						checked={ openOnClick }
+						onChange={ ( val ) => setAttributes( { openOnClick: val } ) }
+					/>
+					<ToggleControl
+						label={ __( 'Open on hover', 'flashblocks-hotspot' ) }
+						checked={ openOnHover }
+						onChange={ ( val ) => setAttributes( { openOnHover: val } ) }
 					/>
 					<TextControl
 						label={ __( 'External tooltip selector', 'flashblocks-hotspot' ) }

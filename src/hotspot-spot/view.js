@@ -1,120 +1,66 @@
 import { store, getContext, getElement } from '@wordpress/interactivity';
 
-/**
- * Get the spot wrapper div from any element inside a spot (e.g. the pin button).
- */
-const getSpotWrapper = ( el ) =>
-	el.closest( '.wp-block-flashblocks-hotspot-spot' );
+const SPOT_SEL = '.wp-block-flashblocks-hotspot-spot';
+const TOOLTIP_SEL = '.wp-block-flashblocks-hotspot-spot__tooltip';
+
+const getSpotWrapper = ( el ) => el.closest( SPOT_SEL );
+const getHotspot = ( el ) => el.closest( '.wp-block-flashblocks-hotspot' );
+
+const getHotspotAttr = ( el, name ) => getHotspot( el )?.getAttribute( name );
+const isClickEnabled = ( el ) => getHotspotAttr( el, 'data-open-click' ) !== 'false';
+const isHoverEnabled = ( el ) => getHotspotAttr( el, 'data-open-hover' ) === 'true';
 
 /**
- * Get the parent hotspot container from any element inside it.
- */
-const getHotspot = ( el ) =>
-	el.closest( '.wp-block-flashblocks-hotspot' );
-
-/**
- * Get the tooltip location selector from the parent hotspot container.
- */
-const getLocationSelector = ( el ) => {
-	const hotspot = getHotspot( el );
-	return hotspot?.getAttribute( 'data-tooltip-location' ) || '';
-};
-
-/**
- * Get the trigger mode from the parent hotspot container.
- */
-const getTriggerMode = ( el ) => {
-	const hotspot = getHotspot( el );
-	return hotspot?.getAttribute( 'data-tooltip-trigger' ) || 'click';
-};
-
-/**
- * Find the external tooltip location container for a given element.
+ * External tooltip location helpers.
  */
 const getExternalLocation = ( el ) => {
-	const selector = getLocationSelector( el );
-	if ( ! selector ) return null;
-	return document.querySelector( selector );
+	const selector = getHotspotAttr( el, 'data-tooltip-location' );
+	return selector ? document.querySelector( selector ) : null;
 };
 
-/**
- * Save the original content of the external location (once).
- */
-const saveOriginalContent = ( el ) => {
-	const loc = getExternalLocation( el );
-	if ( ! loc || loc.__originalSaved ) return;
-	loc.__originalHTML = loc.innerHTML;
-	loc.__originalSaved = true;
-};
-
-/**
- * Restore the original content of the external location.
- */
-const restoreOriginalContent = ( el ) => {
-	const loc = getExternalLocation( el );
-	if ( ! loc || ! loc.__originalSaved ) return;
-	loc.innerHTML = loc.__originalHTML;
-};
-
-/**
- * Show tooltip content in the external location container.
- */
 const showExternal = ( el ) => {
 	const loc = getExternalLocation( el );
 	if ( ! loc ) return false;
-	const spot = getSpotWrapper( el );
-	if ( ! spot ) return false;
-	const tooltip = spot.querySelector(
-		'.wp-block-flashblocks-hotspot-spot__tooltip'
-	);
+	const tooltip = getSpotWrapper( el )?.querySelector( TOOLTIP_SEL );
 	if ( ! tooltip ) return false;
-	saveOriginalContent( el );
+	if ( ! loc.__originalSaved ) {
+		loc.__originalHTML = loc.innerHTML;
+		loc.__originalSaved = true;
+	}
 	loc.innerHTML = tooltip.innerHTML;
 	return true;
 };
 
-/**
- * Restore original content in the external location.
- */
 const clearExternal = ( el ) => {
-	restoreOriginalContent( el );
+	const loc = getExternalLocation( el );
+	if ( loc?.__originalSaved ) {
+		loc.innerHTML = loc.__originalHTML;
+	}
 };
 
 /**
- * Open a spot: show tooltip, handle external location, track state.
+ * Open/close a spot, managing external tooltip and global tracking.
  */
 const openSpot = ( ref, ctx ) => {
-	// Close any previously open spot.
 	if ( state.openSpot && state.openSpot !== ref ) {
 		state.openSpot.__close();
 	}
 	ctx.isOpen = true;
-	const hasExternal = showExternal( ref );
 	const spot = getSpotWrapper( ref );
-	if ( hasExternal && spot ) {
+	if ( showExternal( ref ) && spot ) {
 		spot.setAttribute( 'data-tooltip-external', '' );
 	}
 	ref.__close = () => {
 		ctx.isOpen = false;
-		if ( spot ) {
-			spot.removeAttribute( 'data-tooltip-external' );
-		}
+		spot?.removeAttribute( 'data-tooltip-external' );
 		clearExternal( ref );
+		state.openSpot = null;
 	};
 	state.openSpot = ref;
 };
 
-/**
- * Close a spot.
- */
-const closeSpot = ( ref, ctx ) => {
-	ctx.isOpen = false;
-	state.openSpot = null;
-	clearExternal( ref );
-	const spot = getSpotWrapper( ref );
-	if ( spot ) {
-		spot.removeAttribute( 'data-tooltip-external' );
-	}
+const closeSpot = ( ref ) => {
+	ref.__close?.();
 };
 
 const { state } = store( 'flashblocks/hotspot', {
@@ -127,31 +73,35 @@ const { state } = store( 'flashblocks/hotspot', {
 		},
 		toggle: ( e ) => {
 			e.stopPropagation();
-			const ctx = getContext();
 			const { ref } = getElement();
-
-			// In hover mode, clicking the pin does nothing.
-			if ( getTriggerMode( ref ) === 'hover' ) return;
-
-			if ( ctx.isOpen ) {
-				closeSpot( ref, ctx );
+			if ( ! isClickEnabled( ref ) ) return;
+			const ctx = getContext();
+			const spot = getSpotWrapper( ref );
+			if ( ctx.isOpen && spot?.__clickedOpen ) {
+				// Click-pinned — close it.
+				closeSpot( ref );
+				if ( spot ) spot.__clickedOpen = false;
 			} else {
-				openSpot( ref, ctx );
+				// Closed or hover-opened — pin it open.
+				if ( ! ctx.isOpen ) openSpot( ref, ctx );
+				if ( spot ) spot.__clickedOpen = true;
 			}
 		},
 		hoverIn: () => {
 			const { ref } = getElement();
-			if ( getTriggerMode( ref ) !== 'hover' ) return;
+			if ( ! isHoverEnabled( ref ) ) return;
 			const ctx = getContext();
 			if ( ctx.isOpen ) return;
 			openSpot( ref, ctx );
 		},
 		hoverOut: () => {
 			const { ref } = getElement();
-			if ( getTriggerMode( ref ) !== 'hover' ) return;
+			if ( ! isHoverEnabled( ref ) ) return;
 			const ctx = getContext();
 			if ( ! ctx.isOpen ) return;
-			closeSpot( ref, ctx );
+			const spot = getSpotWrapper( ref );
+			if ( isClickEnabled( ref ) && spot?.__clickedOpen ) return;
+			closeSpot( ref );
 		},
 	},
 	callbacks: {
@@ -161,14 +111,13 @@ const { state } = store( 'flashblocks/hotspot', {
 
 			document.addEventListener( 'click', ( e ) => {
 				if ( ! state.openSpot ) return;
-				if (
-					e.target.closest( '.wp-block-flashblocks-hotspot-spot' )
-				)
-					return;
-				const selector = getLocationSelector( state.openSpot );
+				if ( e.target.closest( SPOT_SEL ) ) return;
+				const selector = getHotspotAttr(
+					state.openSpot,
+					'data-tooltip-location'
+				);
 				if ( selector && e.target.closest( selector ) ) return;
 				state.openSpot.__close();
-				state.openSpot = null;
 			} );
 		},
 	},
