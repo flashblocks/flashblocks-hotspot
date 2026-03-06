@@ -19,6 +19,10 @@
 		"mediaAlt": {
 			"type": "string",
 			"default": ""
+		},
+		"tooltipLocation": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"supports": {

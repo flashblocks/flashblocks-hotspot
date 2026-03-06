@@ -55,6 +55,12 @@ Flashblocks Hotspot lets you select any image and place draggable hotspot marker
 6. Adjust exact position with the Horizontal/Vertical sliders in the sidebar
 7. On the frontend, visitors click a pin to toggle its tooltip
 
+= External Tooltip Location =
+
+By default, tooltip content appears inline above the pin. To display it in a separate container instead (e.g. a sidebar column), add the CSS class `tooltip-hotspot-location` to any block (such as a Group block). When a spot is clicked, its tooltip content will render inside that container instead of inline.
+
+Example layout: a two-column Columns block where Column 1 has the Hotspot block and Column 2 has a Group block with the class `tooltip-hotspot-location`.
+
 == Changelog ==
 
 = 0.1.0 =

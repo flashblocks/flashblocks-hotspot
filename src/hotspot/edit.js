@@ -2,11 +2,12 @@ import { __ } from '@wordpress/i18n';
 import {
 	useBlockProps,
 	useInnerBlocksProps,
+	InspectorControls,
 	MediaPlaceholder,
 	MediaReplaceFlow,
 	BlockControls,
 } from '@wordpress/block-editor';
-import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
+import { PanelBody, TextControl, ToolbarGroup, ToolbarButton } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { createBlock } from '@wordpress/blocks';
@@ -15,7 +16,7 @@ import './editor.scss';
 const ALLOWED_BLOCKS = [ 'flashblocks/hotspot-spot' ];
 
 export default function Edit( { attributes, setAttributes, clientId } ) {
-	const { mediaId, mediaUrl, mediaAlt } = attributes;
+	const { mediaId, mediaUrl, mediaAlt, tooltipLocation } = attributes;
 
 	const { insertBlock } = useDispatch( blockEditorStore );
 	const innerBlockCount = useSelect(
@@ -70,6 +71,16 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 
 	return (
 		<>
+			<InspectorControls>
+				<PanelBody title={ __( 'Tooltip Location', 'flashblocks-hotspot' ) }>
+					<TextControl
+						label={ __( 'Target CSS selector', 'flashblocks-hotspot' ) }
+						help={ __( 'CSS selector for an external container to display tooltip content (e.g. .tooltip-hotspot-location). Leave empty to show tooltips inline.', 'flashblocks-hotspot' ) }
+						value={ tooltipLocation }
+						onChange={ ( val ) => setAttributes( { tooltipLocation: val } ) }
+					/>
+				</PanelBody>
+			</InspectorControls>
 			<BlockControls>
 				<ToolbarGroup>
 					<MediaReplaceFlow
