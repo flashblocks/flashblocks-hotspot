@@ -1,14 +1,45 @@
-import { store, getContext } from '@wordpress/interactivity';
+import { store, getContext, getElement } from '@wordpress/interactivity';
 
-store( 'flashblocks/hotspot', {
+const { state } = store( 'flashblocks/hotspot', {
+	state: {
+		openSpot: null,
+	},
 	actions: {
-		toggle: () => {
-			const ctx = getContext();
-			ctx.isOpen = ! ctx.isOpen;
+		stopProp: ( e ) => {
+			e.stopPropagation();
 		},
-		closeAll: () => {
+		toggle: ( e ) => {
+			e.stopPropagation();
 			const ctx = getContext();
-			ctx.isOpen = false;
+			const { ref } = getElement();
+
+			if ( ctx.isOpen ) {
+				ctx.isOpen = false;
+				state.openSpot = null;
+			} else {
+				// Close any previously open spot.
+				if ( state.openSpot && state.openSpot !== ref ) {
+					state.openSpot.__close();
+				}
+				ctx.isOpen = true;
+				ref.__close = () => { ctx.isOpen = false; };
+				state.openSpot = ref;
+			}
+		},
+	},
+	callbacks: {
+		initClickOutside: () => {
+			// Registered once via data-wp-init on each spot.
+			// The actual listener is shared via state.
+			if ( state._listenerAdded ) return;
+			state._listenerAdded = true;
+
+			document.addEventListener( 'click', ( e ) => {
+				if ( ! state.openSpot ) return;
+				if ( e.target.closest( '.wp-block-flashblocks-hotspot-spot' ) ) return;
+				state.openSpot.__close();
+				state.openSpot = null;
+			} );
 		},
 	},
 } );

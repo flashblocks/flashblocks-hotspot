@@ -25,8 +25,10 @@ echo <<<HTML
 <div
 	{$wrapper_attributes}
 	data-wp-interactive="flashblocks/hotspot"
+	data-wp-init="callbacks.initClickOutside"
 	{$context}
-	data-wp-class--is-open="context.isOpen">
+	data-wp-class--is-open="context.isOpen"
+	data-wp-on--click="actions.stopProp">
 	<button
 		class="wp-block-flashblocks-hotspot-spot__pin"
 		type="button"
