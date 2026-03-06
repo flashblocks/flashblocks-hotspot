@@ -68,6 +68,6 @@
 
 	// Hide inline tooltip when content is shown in external location
 	&[data-tooltip-external] &__tooltip {
-		display: none !important;
+		display: none;
 	}
 }

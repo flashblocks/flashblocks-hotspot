@@ -28,7 +28,9 @@ echo <<<HTML
 	data-wp-init="callbacks.initClickOutside"
 	{$context}
 	data-wp-class--is-open="context.isOpen"
-	data-wp-on--click="actions.stopProp">
+	data-wp-on--click="actions.stopProp"
+	data-wp-on--mouseenter="actions.hoverIn"
+	data-wp-on--mouseleave="actions.hoverOut">
 	<button
 		class="wp-block-flashblocks-hotspot-spot__pin"
 		type="button"
