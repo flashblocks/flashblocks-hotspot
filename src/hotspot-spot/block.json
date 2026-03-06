@@ -1,0 +1,42 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "flashblocks/hotspot-spot",
+	"version": "0.1.0",
+	"title": "Hotspot Spot",
+	"category": "media",
+	"icon": "location",
+	"description": "A single hotspot marker with a tooltip that can contain any blocks.",
+	"keywords": ["spot", "marker", "pin", "tooltip"],
+	"textdomain": "flashblocks-hotspot",
+	"parent": ["flashblocks/hotspot"],
+	"attributes": {
+		"posX": {
+			"type": "number",
+			"default": 50
+		},
+		"posY": {
+			"type": "number",
+			"default": 50
+		}
+	},
+	"supports": {
+		"html": false,
+		"interactivity": true,
+		"color": {
+			"background": true,
+			"text": true
+		},
+		"__experimentalBorder": {
+			"radius": true,
+			"color": true,
+			"width": true,
+			"style": true
+		}
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"render": "file:./render.php",
+	"viewScriptModule": "file:./view.js"
+}

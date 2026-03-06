@@ -1,0 +1,13 @@
+.wp-block-flashblocks-hotspot {
+	&__spots {
+		// Allow interaction with spots in editor
+		pointer-events: auto;
+
+		// Appender button styling
+		.block-list-appender {
+			position: absolute;
+			bottom: 8px;
+			right: 8px;
+		}
+	}
+}

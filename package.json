@@ -1,0 +1,23 @@
+{
+	"name": "flashblocks-hotspot",
+	"version": "0.1.0",
+	"description": "Place interactive hotspots on an image with tooltips that can contain any blocks.",
+	"author": "Sunny Morgan",
+	"license": "GPL-2.0-or-later",
+	"main": "build/index.js",
+	"scripts": {
+		"build": "wp-scripts build --blocks-manifest --experimental-modules",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"packages-update": "wp-scripts packages-update",
+		"plugin-zip": "wp-scripts plugin-zip",
+		"start": "wp-scripts start --blocks-manifest --experimental-modules"
+	},
+	"dependencies": {
+		"@wordpress/interactivity": "^6.28.0"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^31.6.0"
+	}
+}

@@ -1,0 +1,68 @@
+.wp-block-flashblocks-hotspot-spot {
+	position: absolute;
+	transform: translate(-50%, -50%);
+	pointer-events: auto;
+	z-index: 1;
+
+	&.is-open {
+		z-index: 10;
+	}
+
+	// Pin marker
+	&__pin {
+		all: unset;
+		display: block;
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+		background: var(--wp--preset--color--primary, #e53935);
+		border: 3px solid #fff;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+		cursor: pointer;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+		box-sizing: border-box;
+
+		&:hover {
+			transform: scale(1.2);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+		}
+
+		&:focus-visible {
+			outline: 2px solid #007cba;
+			outline-offset: 2px;
+		}
+	}
+
+	// Tooltip
+	&__tooltip {
+		position: absolute;
+		left: 50%;
+		bottom: calc(100% + 12px);
+		transform: translateX(-50%);
+		background: #fff;
+		border-radius: 8px;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+		padding: 16px;
+		min-width: 200px;
+		max-width: 320px;
+		width: max-content;
+		z-index: 100;
+		pointer-events: auto;
+		line-height: normal;
+
+		// Arrow
+		&::after {
+			content: "";
+			position: absolute;
+			top: 100%;
+			left: 50%;
+			transform: translateX(-50%);
+			border: 8px solid transparent;
+			border-top-color: #fff;
+		}
+
+		&[hidden] {
+			display: none;
+		}
+	}
+}

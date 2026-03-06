@@ -1,0 +1,17 @@
+.wp-block-flashblocks-hotspot {
+	position: relative;
+	display: inline-block;
+	line-height: 0;
+
+	&__image {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	&__spots {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+	}
+}
