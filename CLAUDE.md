@@ -26,8 +26,8 @@ Two blocks registered via `blocks-manifest.php`:
 ### `flashblocks/hotspot-spot` (Child) — Dynamic block
 
 - **block.json**: `parent: ["flashblocks/hotspot"]`, `render: file:./render.php`, `viewScriptModule: file:./view.js`
-- **edit.js**: Draggable pin (pointer events), `useInnerBlocksProps` for tooltip content (visible when selected), `InspectorControls` with RangeControl sliders for posX/posY
-- **save.js**: Returns `null` (dynamic block)
+- **edit.js**: Pin button (click to select), `useInnerBlocksProps` for tooltip content (visible when spot or descendant is selected), `InspectorControls` with RangeControl sliders for posX/posY. No drag-to-reposition — conflicts with editor's native block drag system.
+- **save.js**: Returns `<InnerBlocks.Content />` (required to serialize child blocks; returning `null` would lose tooltip content)
 - **render.php**: Interactivity API markup — pin button + tooltip div with `$content` (InnerBlocks)
 - **view.js**: Interactivity store `flashblocks/hotspot` with `actions.toggle` to open/close tooltip
 - **Attributes**: `posX` (number, 0-100%), `posY` (number, 0-100%)
@@ -76,10 +76,10 @@ src/
   hotspot-spot/       # Child block
     block.json
     index.js
-    edit.js           # Draggable pin + InnerBlocks tooltip
-    save.js           # returns null
+    edit.js           # Pin + sidebar sliders + InnerBlocks tooltip
+    save.js           # returns InnerBlocks.Content
     render.php        # Interactivity API frontend markup
     view.js           # Interactivity store
     style.scss        # Pin styling, tooltip positioning/arrow
-    editor.scss       # Drag cursor, tooltip always visible when selected
+    editor.scss       # Tooltip always visible when selected
 ```
