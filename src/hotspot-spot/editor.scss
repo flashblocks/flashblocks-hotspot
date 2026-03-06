@@ -1,11 +1,4 @@
 .wp-block-flashblocks-hotspot-spot {
-	&__pin {
-		&.is-dragging {
-			cursor: grabbing;
-			transform: scale(1.3);
-		}
-	}
-
 	&__tooltip {
 		// Always visible when block is selected in editor
 		display: block !important;

@@ -8,7 +8,6 @@ import {
 	PanelBody,
 	RangeControl,
 } from '@wordpress/components';
-import { useState, useRef, useEffect, useCallback } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import './editor.scss';
@@ -22,8 +21,6 @@ export default function Edit( { attributes, setAttributes, isSelected, clientId 
 		const { hasSelectedInnerBlock } = select( blockEditorStore );
 		return hasSelectedInnerBlock( clientId, true );
 	}, [ isSelected, clientId ] );
-	const [ isDragging, setIsDragging ] = useState( false );
-	const spotRef = useRef();
 
 	const blockProps = useBlockProps( {
 		className: 'wp-block-flashblocks-hotspot-spot',
@@ -31,7 +28,6 @@ export default function Edit( { attributes, setAttributes, isSelected, clientId 
 			left: `${ posX }%`,
 			top: `${ posY }%`,
 		},
-		ref: spotRef,
 	} );
 
 	const innerBlocksProps = useInnerBlocksProps(
@@ -43,47 +39,10 @@ export default function Edit( { attributes, setAttributes, isSelected, clientId 
 		}
 	);
 
-	const handlePointerDown = useCallback( ( e ) => {
-		if ( e.target.closest( '.wp-block-flashblocks-hotspot-spot__tooltip' ) ) {
-			return;
-		}
-		e.preventDefault();
+	const handlePinClick = ( e ) => {
 		e.stopPropagation();
 		selectBlock( clientId );
-		setIsDragging( true );
-		spotRef.current?.setPointerCapture( e.pointerId );
-	}, [ selectBlock, clientId ] );
-
-	const handlePointerMove = useCallback( ( e ) => {
-		if ( ! isDragging ) return;
-
-		const container = spotRef.current?.closest( '.wp-block-flashblocks-hotspot' );
-		if ( ! container ) return;
-
-		const rect = container.getBoundingClientRect();
-		const x = Math.max( 0, Math.min( 100, ( ( e.clientX - rect.left ) / rect.width ) * 100 ) );
-		const y = Math.max( 0, Math.min( 100, ( ( e.clientY - rect.top ) / rect.height ) * 100 ) );
-
-		setAttributes( {
-			posX: Math.round( x * 100 ) / 100,
-			posY: Math.round( y * 100 ) / 100,
-		} );
-	}, [ isDragging, setAttributes ] );
-
-	const handlePointerUp = useCallback( () => {
-		setIsDragging( false );
-	}, [] );
-
-	useEffect( () => {
-		if ( isDragging ) {
-			document.addEventListener( 'pointermove', handlePointerMove );
-			document.addEventListener( 'pointerup', handlePointerUp );
-			return () => {
-				document.removeEventListener( 'pointermove', handlePointerMove );
-				document.removeEventListener( 'pointerup', handlePointerUp );
-			};
-		}
-	}, [ isDragging, handlePointerMove, handlePointerUp ] );
+	};
 
 	return (
 		<>
@@ -109,9 +68,9 @@ export default function Edit( { attributes, setAttributes, isSelected, clientId 
 			</InspectorControls>
 			<div { ...blockProps }>
 				<button
-					className={ `wp-block-flashblocks-hotspot-spot__pin${ isDragging ? ' is-dragging' : '' }` }
+					className="wp-block-flashblocks-hotspot-spot__pin"
 					type="button"
-					onPointerDown={ handlePointerDown }
+					onClick={ handlePinClick }
 					aria-label={ __( 'Hotspot marker', 'flashblocks-hotspot' ) }
 				/>
 				{ isActive && <div { ...innerBlocksProps } /> }
