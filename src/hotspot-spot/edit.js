@@ -9,10 +9,19 @@ import {
 	RangeControl,
 } from '@wordpress/components';
 import { useState, useRef, useEffect, useCallback } from '@wordpress/element';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import './editor.scss';
 
-export default function Edit( { attributes, setAttributes, isSelected } ) {
+export default function Edit( { attributes, setAttributes, isSelected, clientId } ) {
 	const { posX, posY } = attributes;
+
+	const { selectBlock } = useDispatch( blockEditorStore );
+	const isActive = useSelect( ( select ) => {
+		if ( isSelected ) return true;
+		const { hasSelectedInnerBlock } = select( blockEditorStore );
+		return hasSelectedInnerBlock( clientId, true );
+	}, [ isSelected, clientId ] );
 	const [ isDragging, setIsDragging ] = useState( false );
 	const spotRef = useRef();
 
@@ -40,9 +49,10 @@ export default function Edit( { attributes, setAttributes, isSelected } ) {
 		}
 		e.preventDefault();
 		e.stopPropagation();
+		selectBlock( clientId );
 		setIsDragging( true );
 		spotRef.current?.setPointerCapture( e.pointerId );
-	}, [] );
+	}, [ selectBlock, clientId ] );
 
 	const handlePointerMove = useCallback( ( e ) => {
 		if ( ! isDragging ) return;
@@ -104,7 +114,7 @@ export default function Edit( { attributes, setAttributes, isSelected } ) {
 					onPointerDown={ handlePointerDown }
 					aria-label={ __( 'Hotspot marker', 'flashblocks-hotspot' ) }
 				/>
-				{ isSelected && <div { ...innerBlocksProps } /> }
+				{ isActive && <div { ...innerBlocksProps } /> }
 			</div>
 		</>
 	);

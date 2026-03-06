@@ -3,6 +3,17 @@
 		// Allow interaction with spots in editor
 		pointer-events: auto;
 
+		// Override editor .wp-block styles on spot wrappers.
+		// The editor gives .wp-block max-width + auto margins from
+		// constrained layouts (cover, group, etc). We need spots to
+		// position absolutely relative to the image.
+		> .wp-block {
+			position: absolute !important;
+			max-width: none !important;
+			width: auto !important;
+			margin: 0 !important;
+		}
+
 		// Appender button styling
 		.block-list-appender {
 			position: absolute;

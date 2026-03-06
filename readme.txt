@@ -1,55 +1,61 @@
 === Flashblocks Hotspot ===
-Contributors:      The WordPress Contributors
-Tags:              block
+Contributors:      Sunny Morgan
+Tags:              hotspot, image, interactive, marker, tooltip
 Tested up to:      6.8
 Stable tag:        0.1.0
+Requires at least: 6.8
+Requires PHP:      7.4
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
-Example block scaffolded with Create Block tool.
+Place interactive hotspot markers on an image with tooltips that can contain any blocks.
 
 == Description ==
 
-This is the long description. No limit, and you can use Markdown (as well as in the following sections).
+Flashblocks Hotspot lets you select any image and place draggable hotspot markers on it. Each marker has a tooltip that supports full block content — paragraphs, images, buttons, or any other blocks you want.
 
-For backwards compatibility, if this section is missing, the full length of the short description will be used, and
-Markdown parsed.
+= Features =
+
+* Select any image as the hotspot background
+* Add unlimited spot markers
+* Drag markers to position them in the editor
+* Fine-tune position with sidebar percentage sliders
+* Tooltips support any block content (InnerBlocks)
+* Click-to-toggle tooltips on the frontend (Interactivity API)
+* Fully responsive — spots use percentage-based positioning
+* Works inside Cover, Group, and other container blocks
+
+= Blocks =
+
+* **Hotspot** — Container block. Select an image, then add spots.
+* **Hotspot Spot** — Child block. A single marker with a tooltip. Only available inside the Hotspot block.
 
 == Installation ==
 
-This section describes how to install the plugin and get it working.
+= From source =
 
-e.g.
+1. Clone the repository into your `wp-content/plugins/` or `wp-content/mu-plugins/` directory
+2. Run `npm install`
+3. Run `npm run build`
+4. Activate the plugin (or place in mu-plugins for auto-activation)
 
-1. Upload the plugin files to the `/wp-content/plugins/flashblocks-hotspot` directory, or install the plugin through the WordPress plugins screen directly.
-1. Activate the plugin through the 'Plugins' screen in WordPress
+= Development =
 
+1. Run `npm run start` for development mode with file watching
+2. Edit files in `src/hotspot/` (container block) and `src/hotspot-spot/` (child block)
+3. Build output goes to `build/`
 
-== Frequently Asked Questions ==
+== Usage ==
 
-= A question that someone might have =
-
-An answer to that question.
-
-= What about foo bar? =
-
-Answer to foo bar dilemma.
-
-== Screenshots ==
-
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png`
-(or jpg, jpeg, gif).
-2. This is the second screen shot
+1. Add the **Hotspot** block to your page
+2. Select an image using the media picker
+3. Click the **Add Spot** button in the toolbar to add a marker
+4. Drag the marker pin to position it on the image
+5. Click the spot to open its tooltip editor — add any blocks inside
+6. Adjust exact position with the Horizontal/Vertical sliders in the sidebar
+7. On the frontend, visitors click a pin to toggle its tooltip
 
 == Changelog ==
 
 = 0.1.0 =
-* Release
-
-== Arbitrary section ==
-
-You may provide arbitrary sections, in the same format as the ones above. This may be of use for extremely complicated
-plugins where more information needs to be conveyed that doesn't fit into the categories of "description" or
-"installation." Arbitrary sections will be shown below the built-in sections outlined above.
+* Initial release
