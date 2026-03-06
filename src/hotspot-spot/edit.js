@@ -39,9 +39,46 @@ export default function Edit( { attributes, setAttributes, isSelected, clientId 
 		}
 	);
 
-	const handlePinClick = ( e ) => {
+	const handlePinPointerDown = ( e ) => {
 		e.stopPropagation();
+		e.preventDefault();
 		selectBlock( clientId );
+
+		const pin = e.currentTarget;
+		pin.setPointerCapture( e.pointerId );
+
+		const startX = e.clientX;
+		const startY = e.clientY;
+		const startPosX = posX;
+		const startPosY = posY;
+
+		const spotsContainer = pin.closest( '.wp-block-flashblocks-hotspot__spots' );
+		if ( ! spotsContainer ) return;
+		const rect = spotsContainer.getBoundingClientRect();
+
+		let didDrag = false;
+
+		const onMove = ( ev ) => {
+			const dx = ev.clientX - startX;
+			const dy = ev.clientY - startY;
+			if ( ! didDrag && Math.abs( dx ) < 3 && Math.abs( dy ) < 3 ) return;
+			didDrag = true;
+			const newX = Math.min( 100, Math.max( 0, startPosX + ( dx / rect.width ) * 100 ) );
+			const newY = Math.min( 100, Math.max( 0, startPosY + ( dy / rect.height ) * 100 ) );
+			setAttributes( {
+				posX: Math.round( newX * 10 ) / 10,
+				posY: Math.round( newY * 10 ) / 10,
+			} );
+		};
+
+		const onUp = ( ev ) => {
+			pin.releasePointerCapture( ev.pointerId );
+			pin.removeEventListener( 'pointermove', onMove );
+			pin.removeEventListener( 'pointerup', onUp );
+		};
+
+		pin.addEventListener( 'pointermove', onMove );
+		pin.addEventListener( 'pointerup', onUp );
 	};
 
 	return (
@@ -70,7 +107,7 @@ export default function Edit( { attributes, setAttributes, isSelected, clientId 
 				<button
 					className="wp-block-flashblocks-hotspot-spot__pin"
 					type="button"
-					onClick={ handlePinClick }
+					onPointerDown={ handlePinPointerDown }
 					aria-label={ __( 'Hotspot marker', 'flashblocks-hotspot' ) }
 				/>
 				{ isActive && <div { ...innerBlocksProps } /> }

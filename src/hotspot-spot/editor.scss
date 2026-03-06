@@ -1,4 +1,12 @@
 .wp-block-flashblocks-hotspot-spot {
+	&__pin {
+		cursor: grab;
+
+		&:active {
+			cursor: grabbing;
+		}
+	}
+
 	&__tooltip {
 		// Always visible when block is selected in editor
 		display: block !important;
